@@ -1,2 +1,2 @@
 # gini
-A ging demo project
+A gin and gorm demo project
