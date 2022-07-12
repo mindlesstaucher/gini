@@ -10,6 +10,8 @@ import (
 	"gorm.io/gorm"
 
 	"strconv"
+
+	"time"
 )
 
 type CustomerDto struct {
@@ -93,6 +95,42 @@ func PostCustomer(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func createNCustomers(db *gorm.DB, n int64) {
+
+	var i, c int64
+	var batchSize int64 = 1000
+	var batch []CustomerModel
+	var cDto CustomerDto
+
+	//Erstellen von 100000 Einträgen
+	//1min18s für einzelne inserts
+	//1.54 s für 1000er batches
+	//2.48 s für 100er batches
+	//11.57 s für 10er batches
+
+	//Erstellen von 1 Mio Einträgen
+	//13.13 s für 1000er batches
+
+	if n < batchSize {
+		batchSize = n
+	}
+
+	c = 0
+
+	for i = 0; i < n; i++ {
+
+		cDto = randomCustomer()
+		batch = append(batch, CustomerModel{Code: cDto.Code, Name: cDto.Name, Price: cDto.Price})
+		if int64(len(batch)) >= batchSize || i == n-1 {
+			db.Create(&batch)
+			c += 1
+			fmt.Printf("Erstelle %vtes Batch mit %v Einträgen\n", c, batchSize)
+			batch = batch[:0]
+		}
+	}
+
+}
+
 func InitCustomer(db *gorm.DB) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
@@ -100,7 +138,8 @@ func InitCustomer(db *gorm.DB) gin.HandlerFunc {
 		var existing int64
 		var required int64
 		var requested int64
-		var i int64
+
+		start := time.Now()
 
 		db.Model(&CustomerModel{}).Count(&existing)
 
@@ -119,12 +158,14 @@ func InitCustomer(db *gorm.DB) gin.HandlerFunc {
 		if err == nil {
 
 			if required > 0 {
-				for i = 0; i < required; i++ {
-					rc := randomCustomer()
-					db.Create(&CustomerModel{Code: rc.Code, Name: rc.Name, Price: rc.Price})
-				}
+				createNCustomers(db, required)
 			}
 
+			elapsed := time.Since(start)
+			fmt.Printf("Creation took %s\n", elapsed)
+
+			db.Model(&CustomerModel{}).Count(&existing)
+			fmt.Printf("%v entries in db\n", existing)
 			c.Status(http.StatusOK)
 		} else {
 			c.Status(http.StatusNotAcceptable)
@@ -132,3 +173,4 @@ func InitCustomer(db *gorm.DB) gin.HandlerFunc {
 
 	}
 }
+
