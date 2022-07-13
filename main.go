@@ -42,11 +42,20 @@ func publish(client mqtt.Client) {
 	}
 }
 
+var benchHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
+	//fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
+	publish()
+}
+
 func sub(client mqtt.Client, serviceInstance int) {
-	topic := "/help/1"
-	token := client.Subscribe(topic, 1, nil)
-	token.Wait()
-	fmt.Printf("Subscribed to topic %s", topic)
+
+	if serviceInstance > 0 {
+
+		topic := fmt.Sprintf("/bench/%d", serviceInstance-1)
+		token := client.Subscribe(topic, 1, benchHandler)
+		token.Wait()
+		fmt.Printf("Subscribed to topic %s", topic)
+	}
 }
 
 func SetupMqtt(serviceInstance int) mqtt.Client {
