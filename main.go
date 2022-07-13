@@ -1,6 +1,10 @@
 package main
 
 import (
+	"errors"
+	"log"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mindlesstaucher/gini/api/v1/customer"
 	"github.com/mindlesstaucher/gini/api/v1/material"
@@ -12,6 +16,14 @@ func main() {
 
 	var db *gorm.DB
 	var err error
+
+	path := "db"
+	if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+		err := os.Mkdir(path, os.ModePerm)
+		if err != nil {
+			log.Println(err)
+		}
+	}
 
 	db, err = gorm.Open(sqlite.Open("db/database.db"), &gorm.Config{})
 	if err != nil {
