@@ -44,7 +44,7 @@ func publish(client mqtt.Client) {
 
 var benchHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	//fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
-	publish()
+	publish(client)
 }
 
 func sub(client mqtt.Client, serviceInstance int) {
@@ -120,6 +120,9 @@ func RunWebApi(db *gorm.DB, serviceInstance int) {
 	r.GET("/api/v1/customer", customer.GetCustomer(db))
 	r.POST("/api/v1/customer", customer.PostCustomer(db))
 	r.POST("/api/v1/customer/init", customer.InitCustomer(db))
+	r.POST("/api/v1/customer/readBenchmark")
+	r.POST("/api/v1/customer/updateBenchmark")
+	r.POST("/api/v1/customer/deleteBenchmark")
 
 	r.GET("/api/v1/material", material.MaterialGet(db))
 
@@ -147,7 +150,7 @@ func main() {
 
 	serviceInstance := GetServiceInstance()
 
-	SetupMqtt(serviceInstance)
+	//SetupMqtt(serviceInstance)
 
 	db = SetupDb(serviceInstance)
 

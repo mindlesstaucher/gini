@@ -174,3 +174,20 @@ func InitCustomer(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func readBenchmark(db *gorm.DB) gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+
+		n := c.Query("n")
+		var requested int
+
+		r, err := strconv.Atoi(n)
+		requested = int(r)
+
+		for i := 0; i < requested; i++ {
+
+		}
+
+	}
+
+}
