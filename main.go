@@ -120,9 +120,8 @@ func RunWebApi(db *gorm.DB, serviceInstance int) {
 	r.GET("/api/v1/customer", customer.GetCustomer(db))
 	r.POST("/api/v1/customer", customer.PostCustomer(db))
 	r.POST("/api/v1/customer/init", customer.InitCustomer(db))
-	r.POST("/api/v1/customer/readBenchmark")
-	r.POST("/api/v1/customer/updateBenchmark")
-	r.POST("/api/v1/customer/deleteBenchmark")
+	r.POST("/api/v1/customer/readBenchmark", customer.ReadBenchmark(db))
+	r.POST("/api/v1/customer/updateBenchmark", customer.UpdateBenchmark(db))
 
 	r.GET("/api/v1/material", material.MaterialGet(db))
 
