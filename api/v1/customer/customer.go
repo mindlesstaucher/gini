@@ -237,3 +237,27 @@ func UpdateBenchmark(db *gorm.DB) gin.HandlerFunc {
 	}
 
 }
+
+func DeleteBenchmark(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		n := c.Query("n")
+		var requested int
+
+		r, err := strconv.Atoi(n)
+		requested = int(r)
+
+		if err != nil {
+			panic(err.Error())
+		}
+
+		var lastCustomer CustomerModel
+		var customer CustomerModel
+
+		db.Last(&lastCustomer)
+
+		fstCustomerId := int(lastCustomer.ID) - requested
+
+		db.Where("ID > ?", fstCustomerId).Delete(&customer)
+
+	}
+}
