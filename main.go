@@ -25,7 +25,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
 	fmt.Println("Connected")
 
-	publish()
+	publish(client)
 }
 
 var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
@@ -44,7 +44,7 @@ func publish(client mqtt.Client) {
 
 var benchHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	//fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
-	publish(client)
+	publish()
 }
 
 func sub(client mqtt.Client, serviceInstance int) {
