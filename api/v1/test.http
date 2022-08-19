@@ -17,5 +17,16 @@ content-type: application/json
 }
 
 ###
+POST http://localhost:8080/api/v1/customer/readBenchmark?n=100 HTTP/1.1
+
+###
 
 POST http://localhost:8080/api/v1/customer/init?n=10 HTTP/1.1
+
+###
+
+POST http://localhost:8080/api/v1/customer/updateBenchmark?n=3 HTTP/1.1
+
+
+###
+POST http://localhost:8080/api/v1/customer/deleteBenchmark?n=3 HTTP/1.1

@@ -174,3 +174,90 @@ func InitCustomer(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func getLastId(db *gorm.DB) int {
+	var maxCustomer CustomerModel
+
+	db.Limit(1).Last(&maxCustomer)
+
+	return 1
+}
+
+func ReadBenchmark(db *gorm.DB) gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+
+		n := c.Query("n")
+		var requested int
+
+		r, err := strconv.Atoi(n)
+		requested = int(r)
+
+		if err != nil {
+			panic(err.Error())
+		}
+
+		var customerList []CustomerModel
+
+		db.Limit(requested).Find(&customerList)
+
+		c.JSON(http.StatusOK, customerList)
+
+	}
+
+}
+
+func UpdateBenchmark(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		n := c.Query("n")
+		var requested int
+
+		r, err := strconv.Atoi(n)
+		requested = int(r)
+
+		if err != nil {
+			panic(err.Error())
+		}
+
+		var customer CustomerModel
+		var lastCustomer CustomerModel
+
+		db.Last(&lastCustomer)
+
+		fstCustomerId := int(lastCustomer.ID) - requested
+
+		for i := fstCustomerId + 1; i <= int(lastCustomer.ID); i++ {
+
+			var newCustomer CustomerDto = randomCustomer()
+
+			db.Where("ID = ?", i).Model(&customer).Updates(CustomerModel{Code: newCustomer.Code, Name: newCustomer.Name, Price: newCustomer.Price})
+			fmt.Println(i)
+		}
+
+		c.JSON(http.StatusOK, "")
+	}
+
+}
+
+func DeleteBenchmark(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		n := c.Query("n")
+		var requested int
+
+		r, err := strconv.Atoi(n)
+		requested = int(r)
+
+		if err != nil {
+			panic(err.Error())
+		}
+
+		var lastCustomer CustomerModel
+		var customer CustomerModel
+
+		db.Last(&lastCustomer)
+
+		fstCustomerId := int(lastCustomer.ID) - requested
+
+		db.Where("ID > ?", fstCustomerId).Delete(&customer)
+
+	}
+}

@@ -120,7 +120,9 @@ func RunWebApi(db *gorm.DB, serviceInstance int) {
 	r.GET("/api/v1/customer", customer.GetCustomer(db))
 	r.POST("/api/v1/customer", customer.PostCustomer(db))
 	r.POST("/api/v1/customer/init", customer.InitCustomer(db))
-
+	r.POST("/api/v1/customer/readBenchmark", customer.ReadBenchmark(db))
+	r.POST("/api/v1/customer/updateBenchmark", customer.UpdateBenchmark(db))
+	r.POST("/api/v1/customer/deleteBenchmark", customer.DeleteBenchmark(db))
 	r.GET("/api/v1/material", material.MaterialGet(db))
 
 	addr := fmt.Sprintf(":%d", 8080+serviceInstance)
