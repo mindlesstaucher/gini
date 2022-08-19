@@ -196,11 +196,11 @@ func ReadBenchmark(db *gorm.DB) gin.HandlerFunc {
 			panic(err.Error())
 		}
 
-		var maxCustomer []CustomerModel
+		var customerList []CustomerModel
 
-		db.Limit(requested).Find(&maxCustomer)
+		db.Limit(requested).Find(&customerList)
 
-		c.JSON(http.StatusOK, maxCustomer)
+		c.JSON(http.StatusOK, customerList)
 
 	}
 
@@ -227,9 +227,9 @@ func UpdateBenchmark(db *gorm.DB) gin.HandlerFunc {
 
 		for i := fstCustomerId + 1; i <= int(lastCustomer.ID); i++ {
 
-			var newDTO CustomerDto = randomCustomer()
+			var newCustomer CustomerDto = randomCustomer()
 
-			db.Where("ID = ?", i).Model(&customer).Updates(CustomerModel{Code: newDTO.Code, Name: newDTO.Name, Price: newDTO.Price})
+			db.Where("ID = ?", i).Model(&customer).Updates(CustomerModel{Code: newCustomer.Code, Name: newCustomer.Name, Price: newCustomer.Price})
 			fmt.Println(i)
 		}
 
