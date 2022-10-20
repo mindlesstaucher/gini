@@ -44,7 +44,7 @@ func publish(client mqtt.Client) {
 
 var benchHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	//fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
-	publish()
+	//publish()
 }
 
 func sub(client mqtt.Client, serviceInstance int) {
@@ -147,7 +147,7 @@ func main() {
 
 	serviceInstance := GetServiceInstance()
 
-	SetupMqtt(serviceInstance)
+	//SetupMqtt(serviceInstance)
 
 	db = SetupDb(serviceInstance)
 

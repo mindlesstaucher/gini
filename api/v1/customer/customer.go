@@ -58,19 +58,25 @@ func GetCustomer(db *gorm.DB) gin.HandlerFunc {
 
 		name := c.Query("search")
 		limit := c.Query("limit")
+		offset := c.Query("offset")
 
 		n, err := strconv.Atoi(limit)
 		if err != nil {
 			n = 1
 		}
 
-		fmt.Printf("%v %v\n", name, limit)
+		o, err := strconv.Atoi(offset)
+		if err != nil {
+			o = 0
+		}
+
+		fmt.Printf("name:%v, limit:%v, offset:%v\n", name, limit, offset)
 
 		query := fmt.Sprintf("%%%s%%", name)
 
 		var customers []CustomerModel
 
-		db.Limit(n).Where("name LIKE ?", query).Find(&customers)
+		db.Limit(n).Offset(o).Where("name LIKE ?", query).Find(&customers)
 
 		c.JSON(http.StatusOK, customers)
 
@@ -173,4 +179,3 @@ func InitCustomer(db *gorm.DB) gin.HandlerFunc {
 
 	}
 }
-
