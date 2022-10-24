@@ -78,6 +78,8 @@ func GetCustomer(db *gorm.DB) gin.HandlerFunc {
 
 		db.Limit(n).Offset(o).Where("name LIKE ?", query).Find(&customers)
 
+		//fmt.Printf("%v", JSON(customers))
+
 		c.JSON(http.StatusOK, customers)
 
 	}

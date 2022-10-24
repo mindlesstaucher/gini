@@ -6,7 +6,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
 	"github.com/mindlesstaucher/gini/api/v1/customer"
 	"github.com/mindlesstaucher/gini/api/v1/material"
 	"gorm.io/driver/sqlite"
@@ -116,6 +118,18 @@ func SetupDb(serviceInstance int) *gorm.DB {
 
 func RunWebApi(db *gorm.DB, serviceInstance int) {
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"PUT", "PATCH"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://github.com"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
 
 	r.GET("/api/v1/customer", customer.GetCustomer(db))
 	r.POST("/api/v1/customer", customer.PostCustomer(db))
